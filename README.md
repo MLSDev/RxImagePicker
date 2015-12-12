@@ -1,6 +1,6 @@
 # RxImagePicker
 
-RxImagePicker an easy way to get image from Gallery or Camera with request runtime permission on Android M. Using RxJava
+An easy way to get image from Gallery or Camera with request runtime permission on Android M using RxJava
 
 ## Setup
 
@@ -25,4 +25,8 @@ RxImagePicker.with(context).requestImage(Sources.CAMERA).subscribe(new Action1<U
                 }
             });
 ```
+
+## Sample App
+
+<img src="https://cloud.githubusercontent.com/assets/1778155/11761109/cb70a420-a0bd-11e5-8cf1-e2b172745eab.png" width="400">
 
