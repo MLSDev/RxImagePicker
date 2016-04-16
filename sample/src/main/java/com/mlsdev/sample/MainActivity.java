@@ -1,5 +1,6 @@
 package com.mlsdev.sample;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,8 +16,6 @@ import com.mlsdev.rximagepicker.RxImagePicker;
 import com.mlsdev.rximagepicker.Sources;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -64,20 +63,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 RxImagePicker.with(MainActivity.this).requestImage(Sources.GALLERY)
-                        .flatMap(new Func1<Uri, Observable<File>>() {
+                        .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                             @Override
-                            public Observable<File> call(Uri uri) {
-                                return RxImageConverters.uriToFile(MainActivity.this, uri, createTempFile());
+                            public Observable<Bitmap> call(Uri uri) {
+                                return RxImageConverters.uriToBitmap(MainActivity.this, uri);
                             }
                         })
-                        .subscribe(new Action1<File>() {
+                        .subscribe(new Action1<Bitmap>() {
                             @Override
-                            public void call(File file) {
-                                Toast.makeText(MainActivity.this, String.format("Got this: %s", file.getAbsolutePath()), Toast.LENGTH_LONG).show();
-                                Glide.with(MainActivity.this)
-                                        .load(file)
-                                        .crossFade()
-                                        .into(ivPickedImage);
+                            public void call(Bitmap bitmap) {
+//                                Toast.makeText(MainActivity.this, String.format("Got this: %s", bitmap), Toast.LENGTH_LONG).show();
+//                                Glide.with(MainActivity.this)
+//                                        .load(bitmap)
+//                                        .crossFade()
+//                                        .into(ivPickedImage);
+                                ivPickedImage.setImageBitmap(bitmap);
                             }
                         }, new Action1<Throwable>() {
                             @Override
