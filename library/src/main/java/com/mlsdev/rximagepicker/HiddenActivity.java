@@ -72,7 +72,7 @@ public class HiddenActivity extends Activity {
                 if (!checkPermission()) {
                     return;
                 }
-                pictureChooseIntent = new Intent(Intent.ACTION_PICK);
+                pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 pictureChooseIntent.setType("image/*");
                 chooseCode = SELECT_PHOTO;
                 break;
@@ -97,7 +97,7 @@ public class HiddenActivity extends Activity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SELECT_PHOTO:
-                    RxImagePicker.with(this).onImagePicked(Uri.parse("file://" + getImagePath(data.getData())));
+                    RxImagePicker.with(this).onImagePicked(data.getData());
                     break;
                 case TAKE_PHOTO:
                     RxImagePicker.with(this).onImagePicked(cameraPictureUrl);
