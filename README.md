@@ -25,6 +25,39 @@ RxImagePicker.with(context).requestImage(Sources.CAMERA).subscribe(new Action1<U
                 }
             });
 ```
+### Using converters
+
+```java
+RxImagePicker.with(context).requestImage(Sources.GALLERY)
+    .flatMap(new Func1<Uri, Observable<Bitmap>>() {
+             @Override
+             public Observable<Bitmap> call(Uri uri) {
+                 return RxImageConverters.uriToBitmap(context, uri);
+             }
+         })
+         .subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                // Do something with Bitmap
+            }
+         });
+```
+
+```java
+RxImagePicker.with(context).requestImage(Sources.GALLERY)
+    .flatMap(new Func1<Uri, Observable<File>>() {
+             @Override
+             public Observable<File> call(Uri uri) {
+                 return RxImageConverters.uriToFile(context, uri, new File("filename.name");
+             }
+         })
+         .subscribe(new Action1<File>() {
+            @Override
+            public void call(File file) {
+                // Do something with your file copy
+            }
+         });
+```
 
 ## Sample App
 
