@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +25,7 @@ import rx.functions.Func1;
 public class MainActivity extends AppCompatActivity {
 
     private ImageView ivPickedImage;
+    private RadioGroup converterRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,73 +35,41 @@ public class MainActivity extends AppCompatActivity {
         ivPickedImage = (ImageView) findViewById(R.id.iv_picked_image);
         FloatingActionButton fabCamera = (FloatingActionButton) findViewById(R.id.fab_pick_camera);
         FloatingActionButton fabGallery = (FloatingActionButton) findViewById(R.id.fab_pick_gallery);
+        converterRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
+        converterRadioGroup.check(R.id.radio_uri);
 
-        fabCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RxImagePicker.with(MainActivity.this).requestImage(Sources.CAMERA)
-                        .flatMap(new Func1<Uri, Observable<File>>() {
-                            @Override
-                            public Observable<File> call(Uri uri) {
-                                return RxImageConverters.uriToFile(MainActivity.this, uri, createTempFile());
-                            }
-                        })
-                        .subscribe(new Action1<File>() {
-                            @Override
-                            public void call(File file) {
-                                Toast.makeText(MainActivity.this, String.format("Got this: %s", file.getAbsolutePath()), Toast.LENGTH_LONG).show();
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+        fabCamera.setOnClickListener(view -> pickImageFromSource(Sources.CAMERA));
+        fabGallery.setOnClickListener(view -> pickImageFromSource(Sources.GALLERY));
+    }
 
-            }
-        });
-
-        fabGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RxImagePicker.with(MainActivity.this).requestImage(Sources.GALLERY)
-                        .flatMap(new Func1<Uri, Observable<Bitmap>>() {
-                            @Override
-                            public Observable<Bitmap> call(Uri uri) {
-                                return RxImageConverters.uriToBitmap(MainActivity.this, uri);
-                            }
-                        })
-                        .subscribe(new Action1<Bitmap>() {
-                            @Override
-                            public void call(Bitmap bitmap) {
-//                                Toast.makeText(MainActivity.this, String.format("Got this: %s", bitmap), Toast.LENGTH_LONG).show();
-//                                Glide.with(MainActivity.this)
-//                                        .load(bitmap)
-//                                        .crossFade()
-//                                        .into(ivPickedImage);
-                                ivPickedImage.setImageBitmap(bitmap);
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                Toast.makeText(MainActivity.this, String.format("Error: %s", throwable), Toast.LENGTH_LONG).show();
-                            }
-                        });
-            }
-        });
+    private void pickImageFromSource(Sources source) {
+        RxImagePicker.with(this).requestImage(source)
+                .flatMap(uri -> {
+                    switch (converterRadioGroup.getCheckedRadioButtonId()) {
+                        case R.id.radio_file:
+                            return RxImageConverters.uriToFile(this, uri, createTempFile());
+                        case R.id.radio_bitmap:
+                            return RxImageConverters.uriToBitmap(this, uri);
+                        default:
+                            return Observable.just(uri);
+                    }
+                })
+                .subscribe(result -> {
+                    Toast.makeText(MainActivity.this, String.format("Result: %s", result), Toast.LENGTH_LONG).show();
+                    if (result instanceof Bitmap) {
+                        ivPickedImage.setImageBitmap((Bitmap) result);
+                    } else {
+                        Glide.with(MainActivity.this)
+                                .load(result) // works for File or Uri
+                                .crossFade()
+                                .into(ivPickedImage);
+                    }
+                }, throwable -> {
+                    Toast.makeText(MainActivity.this, String.format("Error: %s", throwable), Toast.LENGTH_LONG).show();
+                });
     }
 
     private File createTempFile() {
         return new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), System.currentTimeMillis() + "_image.jpeg");
     }
-
-    Action1<Uri> imagePickSubscriber = new Action1<Uri>() {
-        @Override
-        public void call(Uri uri) {
-            Glide.with(MainActivity.this)
-                    .load(uri)
-                    .crossFade()
-                    .into(ivPickedImage);
-        }
-    };
 }
