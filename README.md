@@ -48,7 +48,7 @@ RxImagePicker.with(context).requestImage(Sources.GALLERY)
     .flatMap(new Func1<Uri, Observable<File>>() {
              @Override
              public Observable<File> call(Uri uri) {
-                 return RxImageConverters.uriToFile(context, uri, new File("filename.name");
+                 return RxImageConverters.uriToFile(context, uri, new File("YOUR FILE");
              }
          })
          .subscribe(new Action1<File>() {
