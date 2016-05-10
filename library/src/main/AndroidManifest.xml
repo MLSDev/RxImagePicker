@@ -10,6 +10,7 @@
 
         <activity
             android:name=".HiddenActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
             android:screenOrientation="behind"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
