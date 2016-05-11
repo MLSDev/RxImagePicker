@@ -1,12 +1,10 @@
 package com.mlsdev.sample;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -19,8 +17,6 @@ import com.mlsdev.rximagepicker.Sources;
 import java.io.File;
 
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 public class MainActivity extends AppCompatActivity {
 
