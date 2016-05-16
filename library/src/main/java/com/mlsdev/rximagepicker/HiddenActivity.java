@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -52,6 +53,21 @@ public class HiddenActivity extends Activity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case SELECT_PHOTO:
+                    RxImagePicker.with(this).onImagePicked(data.getData());
+                    break;
+                case TAKE_PHOTO:
+                    RxImagePicker.with(this).onImagePicked(cameraPictureUrl);
+                    break;
+            }
+        }
+        finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         RxImagePicker.with(this).onDestroy();
@@ -72,7 +88,16 @@ public class HiddenActivity extends Activity {
                 if (!checkPermission()) {
                     return;
                 }
-                pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                } else {
+                    pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                }
+                pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 pictureChooseIntent.setType("image/*");
                 chooseCode = SELECT_PHOTO;
                 break;
@@ -90,21 +115,6 @@ public class HiddenActivity extends Activity {
         } else {
             return true;
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case SELECT_PHOTO:
-                    RxImagePicker.with(this).onImagePicked(data.getData());
-                    break;
-                case TAKE_PHOTO:
-                    RxImagePicker.with(this).onImagePicked(cameraPictureUrl);
-                    break;
-            }
-        }
-        finish();
     }
 
     private File createImageFile() {
