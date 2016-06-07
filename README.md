@@ -66,6 +66,9 @@ RxImagePicker.with(context).requestImage(Sources.GALLERY)
 ## Authors
 * [Sergey Glebov](mailto:glebov@mlsdev.com) ([frederikos][github-frederikos]), MLSDev 
 
+## License
+RxImagePicker is released under the MIT license. See LICENSE for details.
+
 ## About MLSDev
 
 [<img src="https://cloud.githubusercontent.com/assets/1778155/11761239/ccfddf60-a0c2-11e5-8f2a-8573029ab09d.png" alt="MLSDev.com">][mlsdev]
