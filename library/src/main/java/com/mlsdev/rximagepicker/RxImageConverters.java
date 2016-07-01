@@ -86,6 +86,7 @@ public class RxImageConverters {
                         imageCursor = context.getContentResolver().query(uri, imageColumns, MediaStore.Images.Media._ID + "=" + imageId, null, null);
                         if (imageCursor != null && imageCursor.moveToFirst()) {
                             subscriber.onNext(imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA)));
+                            subscriber.onCompleted();
                         } else {
                             subscriber.onError(new Throwable("No image found"));
                         }
