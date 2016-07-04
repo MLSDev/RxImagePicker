@@ -59,6 +59,25 @@ RxImagePicker.with(context).requestImage(Sources.GALLERY)
          });
 ```
 
+```java
+RxImagePicker.with(this)                                                  
+    .requestImage(Sources.GALLERY)                                        
+    .flatMap(new Func1<Uri, Observable<? extends String>>() {             
+        @Override                                                         
+        public Observable<? extends String> call(Uri uri) {               
+            return RxImageConverters.uriToFullPath(MainActivity.this, uri);
+        }                                                                 
+    })                                                                    
+    .subscribe(new Action1<String>() {                                    
+        @Override                                                         
+        public void call(String path) {                                    
+            // Do something with your image path
+            // Ex. /storage/emulated/0/DCIM/Camera/20160701_113408.jpg                              
+        }                                                                 
+    });                                                                   
+```
+
+
 ## Sample App
 
 <img src="https://cloud.githubusercontent.com/assets/1778155/11761109/cb70a420-a0bd-11e5-8cf1-e2b172745eab.png" width="400">
