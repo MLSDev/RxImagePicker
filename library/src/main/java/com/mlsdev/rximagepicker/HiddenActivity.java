@@ -2,6 +2,8 @@ package com.mlsdev.rximagepicker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -11,10 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -79,7 +77,10 @@ public class HiddenActivity extends Activity {
         Intent pictureChooseIntent = null;
         switch (sourceType) {
             case CAMERA:
-                cameraPictureUrl = Uri.fromFile(createImageFile());
+                if (!checkPermission()) {
+                    return;
+                }
+                cameraPictureUrl = createImageUri();
                 pictureChooseIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode = TAKE_PHOTO;
@@ -117,20 +118,12 @@ public class HiddenActivity extends Activity {
         }
     }
 
-    private File createImageFile() {
-        File imageTempFile = null;
+    private Uri createImageUri() {
+        ContentResolver contentResolver = getContentResolver();
+        ContentValues cv = new ContentValues();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        File storageDir = getExternalFilesDir(null);
-        try {
-            imageTempFile = File.createTempFile(
-                    timeStamp,
-                    ".jpg",
-                    storageDir
-            );
-        } catch (IOException ex) {
-            Log.e(TAG, ex.toString());
-        }
-        return imageTempFile;
+        cv.put(MediaStore.Images.Media.TITLE, timeStamp);
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
     }
 
     private String getImagePath(Uri uri) {
@@ -146,6 +139,4 @@ public class HiddenActivity extends Activity {
         }
         return result;
     }
-
 }
-
