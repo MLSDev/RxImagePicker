@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -72,24 +73,22 @@ public class HiddenActivity extends Activity {
     }
 
     private void handleIntent(Intent intent) {
+        if (!checkPermission()) {
+            return;
+        }
+
         Sources sourceType = Sources.values()[intent.getIntExtra(IMAGE_SOURCE, 0)];
         int chooseCode = 0;
         Intent pictureChooseIntent = null;
+
         switch (sourceType) {
             case CAMERA:
-                if (!checkPermission()) {
-                    return;
-                }
                 cameraPictureUrl = createImageUri();
                 pictureChooseIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode = TAKE_PHOTO;
                 break;
             case GALLERY:
-                if (!checkPermission()) {
-                    return;
-                }
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
@@ -103,6 +102,7 @@ public class HiddenActivity extends Activity {
                 chooseCode = SELECT_PHOTO;
                 break;
         }
+
         startActivityForResult(pictureChooseIntent, chooseCode);
     }
 
@@ -126,17 +126,4 @@ public class HiddenActivity extends Activity {
         return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
     }
 
-    private String getImagePath(Uri uri) {
-        String result = null;
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            result = cursor.getString(column_index);
-            cursor.close();
-        }
-        return result;
-    }
 }
