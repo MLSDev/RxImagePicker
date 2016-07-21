@@ -19,9 +19,11 @@ import java.util.Locale;
 
 public class HiddenActivity extends Activity {
 
-    public static String IMAGE_SOURCE = "image_source";
+    private static final String KEY_CAMERA_PICTURE_URL = "cameraPictureUrl";
 
-    private static String TAG = "RxImagePicker";
+    public static final String IMAGE_SOURCE = "image_source";
+
+    private static final String TAG = "RxImagePicker";
 
     private static final int SELECT_PHOTO = 100;
     private static final int TAKE_PHOTO = 101;
@@ -34,6 +36,18 @@ public class HiddenActivity extends Activity {
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(KEY_CAMERA_PICTURE_URL, cameraPictureUrl);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        cameraPictureUrl = savedInstanceState.getParcelable(KEY_CAMERA_PICTURE_URL);
     }
 
     @Override
