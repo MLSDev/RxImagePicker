@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class HiddenActivity extends Activity {
+
     public static String IMAGE_SOURCE = "image_source";
 
     private static String TAG = "RxImagePicker";
@@ -69,7 +69,9 @@ public class HiddenActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RxImagePicker.with(this).onDestroy();
+        if (isFinishing()) {
+            RxImagePicker.with(this).onDestroy();
+        }
     }
 
     private void handleIntent(Intent intent) {
