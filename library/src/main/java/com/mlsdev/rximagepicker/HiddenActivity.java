@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,9 +18,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class HiddenActivity extends Activity {
-    public static String IMAGE_SOURCE = "image_source";
 
-    private static String TAG = "RxImagePicker";
+    private static final String KEY_CAMERA_PICTURE_URL = "cameraPictureUrl";
+
+    public static final String IMAGE_SOURCE = "image_source";
+
+    private static final String TAG = "RxImagePicker";
 
     private static final int SELECT_PHOTO = 100;
     private static final int TAKE_PHOTO = 101;
@@ -34,6 +36,18 @@ public class HiddenActivity extends Activity {
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(KEY_CAMERA_PICTURE_URL, cameraPictureUrl);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        cameraPictureUrl = savedInstanceState.getParcelable(KEY_CAMERA_PICTURE_URL);
     }
 
     @Override
@@ -69,7 +83,9 @@ public class HiddenActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RxImagePicker.with(this).onDestroy();
+        if (isFinishing()) {
+            RxImagePicker.with(this).onDestroy();
+        }
     }
 
     private void handleIntent(Intent intent) {
