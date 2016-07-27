@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,8 +23,6 @@ public class HiddenActivity extends Activity {
     private static final String KEY_CAMERA_PICTURE_URL = "cameraPictureUrl";
 
     public static final String IMAGE_SOURCE = "image_source";
-
-    private static final String TAG = "RxImagePicker";
 
     private static final int SELECT_PHOTO = 100;
     private static final int TAKE_PHOTO = 101;
@@ -78,14 +77,6 @@ public class HiddenActivity extends Activity {
             }
         }
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            RxImagePicker.with(this).onDestroy();
-        }
     }
 
     private void handleIntent(Intent intent) {

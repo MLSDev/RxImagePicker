@@ -3,6 +3,7 @@ package com.mlsdev.rximagepicker;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import rx.Observable;
 import rx.subjects.PublishSubject;
@@ -25,6 +26,10 @@ public class RxImagePicker {
         this.context = context;
     }
 
+    public Observable<Uri> getActiveSubscription() {
+        return publishSubject;
+    }
+
     public Observable<Uri> requestImage(Sources imageSource) {
         publishSubject = PublishSubject.create();
         startImagePickHiddenActivity(imageSource.ordinal());
@@ -34,12 +39,6 @@ public class RxImagePicker {
     void onImagePicked(Uri uri) {
         if (publishSubject != null) {
             publishSubject.onNext(uri);
-            publishSubject.onCompleted();
-        }
-    }
-
-    void onDestroy() {
-        if (publishSubject != null) {
             publishSubject.onCompleted();
         }
     }
