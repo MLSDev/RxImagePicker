@@ -2,6 +2,7 @@ package com.mlsdev.rximagepicker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,6 +25,7 @@ public class HiddenActivity extends Activity {
     private static final String KEY_CAMERA_PICTURE_URL = "cameraPictureUrl";
 
     public static final String IMAGE_SOURCE = "image_source";
+    public static final String ALLOW_MULTIPLE_IMAGES = "allow_multiple_images";
 
     private static final int SELECT_PHOTO = 100;
     private static final int TAKE_PHOTO = 101;
@@ -69,7 +72,7 @@ public class HiddenActivity extends Activity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SELECT_PHOTO:
-                    RxImagePicker.with(this).onImagePicked(data.getData());
+                    handleGalleryResult(data);
                     break;
                 case TAKE_PHOTO:
                     RxImagePicker.with(this).onImagePicked(cameraPictureUrl);
@@ -77,6 +80,23 @@ public class HiddenActivity extends Activity {
             }
         }
         finish();
+    }
+
+    private void handleGalleryResult(Intent data) {
+        if (getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false)) {
+            ArrayList<Uri> imageUris = new ArrayList<>();
+            ClipData clipData = data.getClipData();
+            if (clipData != null) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    imageUris.add(clipData.getItemAt(0).getUri());
+                }
+            } else {
+                imageUris.add(data.getData());
+            }
+            RxImagePicker.with(this).onImagesPicked(imageUris);
+        } else {
+            RxImagePicker.with(this).onImagePicked(data.getData());
+        }
     }
 
     private void handleIntent(Intent intent) {
@@ -98,7 +118,7 @@ public class HiddenActivity extends Activity {
             case GALLERY:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false));
                     pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 } else {
                     pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
