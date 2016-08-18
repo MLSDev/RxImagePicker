@@ -88,7 +88,7 @@ public class HiddenActivity extends Activity {
             ClipData clipData = data.getClipData();
             if (clipData != null) {
                 for (int i = 0; i < clipData.getItemCount(); i++) {
-                    imageUris.add(clipData.getItemAt(0).getUri());
+                    imageUris.add(clipData.getItemAt(i).getUri());
                 }
             } else {
                 imageUris.add(data.getData());
