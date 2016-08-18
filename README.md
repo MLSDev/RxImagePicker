@@ -10,7 +10,7 @@ In your build.gradle :
 
 ```gradle
 dependencies {
-    compile 'com.mlsdev.rximagepicker:library:1.2.1'
+    compile 'com.mlsdev.rximagepicker:library:1.2.2'
     compile 'io.reactivex:rxjava:1.0.14'
 }
 ```
