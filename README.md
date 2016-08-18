@@ -10,7 +10,7 @@ In your build.gradle :
 
 ```gradle
 dependencies {
-    compile 'com.mlsdev.rximagepicker:library:1.1.9'
+    compile 'com.mlsdev.rximagepicker:library:1.2.1'
     compile 'io.reactivex:rxjava:1.0.14'
 }
 ```
@@ -48,7 +48,7 @@ RxImagePicker.with(context).requestImage(Sources.GALLERY)
     .flatMap(new Func1<Uri, Observable<File>>() {
              @Override
              public Observable<File> call(Uri uri) {
-                 return RxImageConverters.uriToFile(context, uri, new File("YOUR FILE");
+                 return RxImageConverters.uriToFile(context, uri, new File("YOUR FILE"));
              }
          })
          .subscribe(new Action1<File>() {
