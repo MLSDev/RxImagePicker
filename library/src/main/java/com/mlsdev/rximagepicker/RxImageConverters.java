@@ -20,6 +20,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class RxImageConverters {
+
     public static Observable<File> uriToFile(final Context context, final Uri uri, final File file) {
         return Observable.create(new Observable.OnSubscribe<File>() {
             @Override
@@ -28,7 +29,26 @@ public class RxImageConverters {
                     InputStream inputStream = context.getContentResolver().openInputStream(uri);
                     copyInputStreamToFile(inputStream, file);
                     subscriber.onNext(file);
+                    subscriber.onCompleted();
                 } catch (Exception e) {
+                    Log.e(RxImageConverters.class.getSimpleName(), "Error converting uri", e);
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public static Observable<Bitmap> uriToBitmap(final Context context, final Uri uri) {
+        return Observable.create(new Observable.OnSubscribe<Bitmap>() {
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                    subscriber.onNext(bitmap);
+                    subscriber.onCompleted();
+                } catch (IOException e) {
                     Log.e(RxImageConverters.class.getSimpleName(), "Error converting uri", e);
                     subscriber.onError(e);
                 }
@@ -49,57 +69,4 @@ public class RxImageConverters {
         in.close();
     }
 
-    public static Observable<Bitmap> uriToBitmap(final Context context, final Uri uri) {
-        return Observable.create(new Observable.OnSubscribe<Bitmap>() {
-            @Override
-            public void call(Subscriber<? super Bitmap> subscriber) {
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-                    subscriber.onNext(bitmap);
-                } catch (IOException e) {
-                    Log.e(RxImageConverters.class.getSimpleName(), "Error converting uri", e);
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public static Observable<String> uriToFullPath(final Context context, final Uri originalUri) {
-        return Observable
-            .create(new Observable.OnSubscribe<String>() {
-                @Override
-                public void call(Subscriber<? super String> subscriber) {
-                    Cursor imageCursor = null;
-                    try {
-                        String imageId = originalUri.getLastPathSegment().split("%3A")[0].split(":")[1];
-                        final String[] imageColumns = {MediaStore.Images.Media.DATA};
-
-                        Uri uri;
-                        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-                            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                        } else {
-                            uri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
-                        }
-
-                        imageCursor = context.getContentResolver().query(uri, imageColumns, MediaStore.Images.Media._ID + "=" + imageId, null, null);
-                        if (imageCursor != null && imageCursor.moveToFirst()) {
-                            subscriber.onNext(imageCursor.getString(imageCursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)));
-                            subscriber.onCompleted();
-                        } else {
-                            subscriber.onError(new Throwable("No image found"));
-                        }
-                    } catch (Exception e) {
-                        subscriber.onError(e);
-                    } finally {
-                        if (imageCursor != null) {
-                            imageCursor.close();
-                        }
-                    }
-                }
-            })
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread());
-    }
 }
