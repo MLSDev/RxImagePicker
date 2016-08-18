@@ -4,13 +4,13 @@ An easy way to get image from Gallery or Camera with request runtime permission 
 
 ## Setup
 
-To use this library your ` minSdkVersion` must be >= 14.
+To use this library your ` minSdkVersion` must be >= 16.
 
 In your build.gradle :
 
 ```gradle
 dependencies {
-    compile 'com.mlsdev.rximagepicker:library:1.2.2'
+    compile 'com.mlsdev.rximagepicker:library:1.3.0'
     compile 'io.reactivex:rxjava:1.0.14'
 }
 ```
@@ -25,6 +25,18 @@ RxImagePicker.with(context).requestImage(Sources.CAMERA).subscribe(new Action1<U
                 }
             });
 ```
+
+Request multiple images on Android Api level 18+ :
+
+```java
+RxImagePicker.with(context).requestMultipleImages().subscribe(new Action1<List<Uri>>() {
+            @Override
+            public void call(List<Uri> uris) {
+                //Get images by uris.
+            }
+        });
+```
+
 ### Using converters
 
 ```java
