@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,7 +117,8 @@ public class HiddenActivity extends Activity {
             case GALLERY:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false));
+                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,
+                            getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false));
                     pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 } else {
                     pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -134,11 +134,13 @@ public class HiddenActivity extends Activity {
     }
 
     private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(HiddenActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(HiddenActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    0);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED)) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 0);
             return false;
         } else {
             return true;
