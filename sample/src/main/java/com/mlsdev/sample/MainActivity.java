@@ -16,14 +16,12 @@ import com.mlsdev.rximagepicker.Sources;
 
 import java.io.File;
 
-import rx.Observable;
-import rx.Subscription;
+import io.reactivex.Observable;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageView ivPickedImage;
     private RadioGroup converterRadioGroup;
-    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +42,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.unsubscribe();
-        }
-    }
-
     private void pickImageFromSource(Sources source) {
-        subscription = RxImagePicker.with(this).requestImage(source)
+        RxImagePicker.with(this).requestImage(source)
                 .flatMap(uri -> {
                     switch (converterRadioGroup.getCheckedRadioButtonId()) {
                         case R.id.radio_file:
@@ -64,9 +54,7 @@ public class MainActivity extends AppCompatActivity {
                             return Observable.just(uri);
                     }
                 })
-                .subscribe(this::onImagePicked, throwable -> {
-                    Toast.makeText(MainActivity.this, String.format("Error: %s", throwable), Toast.LENGTH_LONG).show();
-                });
+                .subscribe(this::onImagePicked, throwable -> Toast.makeText(MainActivity.this, String.format("Error: %s", throwable), Toast.LENGTH_LONG).show());
     }
 
     private void onImagePicked(Object result) {
