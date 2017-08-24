@@ -99,9 +99,6 @@ public class HiddenActivity extends Activity {
     }
 
     private void handleIntent(Intent intent) {
-        if (!checkPermission()) {
-            return;
-        }
 
         Sources sourceType = Sources.values()[intent.getIntExtra(IMAGE_SOURCE, 0)];
         int chooseCode = 0;
@@ -109,12 +106,22 @@ public class HiddenActivity extends Activity {
 
         switch (sourceType) {
             case CAMERA:
+
+                if (!checkPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE})) {
+                    return;
+                }
+
                 cameraPictureUrl = createImageUri();
                 pictureChooseIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode = TAKE_PHOTO;
                 break;
             case GALLERY:
+
+                if (!checkPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE})) {
+                    return;
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,
@@ -133,18 +140,18 @@ public class HiddenActivity extends Activity {
         startActivityForResult(pictureChooseIntent, chooseCode);
     }
 
-    private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED
-                || (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED)) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 0);
-            return false;
-        } else {
-            return true;
+    private boolean checkPermissions(String[] permissions) {
+        for (String permission : permissions) {
+            if (!isPermissionGranted(permission)) {
+                ActivityCompat.requestPermissions(this, permissions, 0);
+                return false;
+            }
         }
+        return true;
+    }
+
+    private boolean isPermissionGranted(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     private Uri createImageUri() {
