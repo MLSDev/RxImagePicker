@@ -14,6 +14,10 @@ dependencies {
 }
 ```
 
+If you intend to use the camera, add the following to your AndroidManifest:
+
+`<uses-permission android:name="android.permission.CAMERA"/>`
+
 ## Example
 
 ```java
