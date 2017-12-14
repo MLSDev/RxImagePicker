@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -42,6 +41,7 @@ public class RxImagePicker extends Fragment {
     private PublishSubject<Boolean> attachedSubject;
     private PublishSubject<Uri> publishSubject;
     private PublishSubject<List<Uri>> publishSubjectMultipleImages;
+    private PublishSubject<Integer> canceledSubject;
 
     private boolean allowMultipleImages = false;
     private Sources imageSource;
@@ -60,20 +60,22 @@ public class RxImagePicker extends Fragment {
     public Observable<Uri> requestImage(final Sources source) {
         publishSubject = PublishSubject.create();
         attachedSubject = PublishSubject.create();
+        canceledSubject = PublishSubject.create();
         allowMultipleImages = false;
         imageSource = source;
         requestPickImage();
-        return publishSubject;
+        return publishSubject.takeUntil(canceledSubject);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public Observable<List<Uri>> requestMultipleImages() {
         publishSubjectMultipleImages = PublishSubject.create();
         attachedSubject = PublishSubject.create();
+        canceledSubject = PublishSubject.create();
         imageSource = Sources.GALLERY;
         allowMultipleImages = true;
         requestPickImage();
-        return publishSubjectMultipleImages;
+        return publishSubjectMultipleImages.takeUntil(canceledSubject);
     }
 
     @Override
@@ -116,6 +118,8 @@ public class RxImagePicker extends Fragment {
                     onImagePicked(cameraPictureUrl);
                     break;
             }
+        } else {
+            canceledSubject.onNext(requestCode);
         }
     }
 
