@@ -36,14 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
         fabCamera.setOnClickListener(view -> pickImageFromSource(Sources.CAMERA));
         fabGallery.setOnClickListener(view -> pickImageFromSource(Sources.GALLERY));
-
-        if (RxImagePicker.with(this).getActiveSubscription() != null) {
-            RxImagePicker.with(this).getActiveSubscription().subscribe(this::onImagePicked);
-        }
     }
 
     private void pickImageFromSource(Sources source) {
-        RxImagePicker.with(this).requestImage(source)
+        RxImagePicker.with(getFragmentManager()).requestImage(source)
                 .flatMap(uri -> {
                     switch (converterRadioGroup.getCheckedRadioButtonId()) {
                         case R.id.radio_file:
