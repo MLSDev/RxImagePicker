@@ -28,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ivPickedImage = (ImageView) findViewById(R.id.iv_picked_image);
-        FloatingActionButton fabCamera = (FloatingActionButton) findViewById(R.id.fab_pick_camera);
-        FloatingActionButton fabGallery = (FloatingActionButton) findViewById(R.id.fab_pick_gallery);
-        converterRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
+        ivPickedImage = findViewById(R.id.iv_picked_image);
+        FloatingActionButton fabCamera = findViewById(R.id.fab_pick_camera);
+        FloatingActionButton fabGallery = findViewById(R.id.fab_pick_gallery);
+        converterRadioGroup = findViewById(R.id.radio_group);
         converterRadioGroup.check(R.id.radio_uri);
 
         fabCamera.setOnClickListener(view -> pickImageFromSource(Sources.CAMERA));
