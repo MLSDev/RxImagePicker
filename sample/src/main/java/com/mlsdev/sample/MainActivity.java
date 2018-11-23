@@ -1,21 +1,23 @@
 package com.mlsdev.sample;
 
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mlsdev.rximagepicker.RxImageConverters;
 import com.mlsdev.rximagepicker.RxImagePicker;
 import com.mlsdev.rximagepicker.Sources;
 
 import java.io.File;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.reactivex.Observable;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void pickImageFromSource(Sources source) {
-        RxImagePicker.with(getFragmentManager()).requestImage(source)
+        RxImagePicker.with(getSupportFragmentManager()).requestImage(source)
                 .flatMap(uri -> {
                     switch (converterRadioGroup.getCheckedRadioButtonId()) {
                         case R.id.radio_file:
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Glide.with(this)
                     .load(result) // works for File or Uri
-                    .crossFade()
+                    .transition(new DrawableTransitionOptions().crossFade())
                     .into(ivPickedImage);
         }
     }
