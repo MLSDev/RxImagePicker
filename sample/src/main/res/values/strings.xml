@@ -4,4 +4,5 @@
     <string name="load_from_uri">Load from Uri</string>
     <string name="convert_uri_to_file">Convert Uri to file</string>
     <string name="convert_uri_to_bitmap">Convert Uri to Bitmap</string>
+    <string name="label_pick_image">Pick image</string>
 </resources>

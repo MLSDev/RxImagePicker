@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 def siteUrl = 'https://github.com/Frederikos/RxImagePicker'
 def gitUrl = 'https://github.com/Frederikos/RxImagePicker.git'
@@ -76,7 +79,8 @@ install {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'io.reactivex.rxjava2:rxandroid:2.1.0'
     api 'io.reactivex.rxjava2:rxjava:2.2.2'
     testImplementation 'junit:junit:4.12'
@@ -103,4 +107,7 @@ artifacts {
 
 task findConventions << {
     println project.getConvention()
+}
+repositories {
+    mavenCentral()
 }
