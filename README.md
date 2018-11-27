@@ -10,30 +10,48 @@ In your build.gradle :
 
 ```gradle
 dependencies {
-    compile 'com.mlsdev.rximagepicker:library:2.1.5'    
+    implementation 'com.mlsdev.rximagepicker:library:2.2.0'    
 }
 ```
 
 ## Example
 
-```java
-RxImagePicker.with(context).requestImage(Sources.CAMERA).subscribe(new Consumer<Uri>() {
-                    @Override
-                    public void accept(@NonNull Uri uri) throws Exception {
-                        //Get image by uri using one of image loading libraries. I use Glide in sample app.
-                    }
-                });
+```kotlin
+RxImagePicker.with(supportFragmentManager).requestImage(Sources.CAMERA).subscribe {
+            //Get image by uri using one of image loading libraries. I use Glide in sample app.
+        }
+```
+
+Request image from gallery :
+
+```kotlin
+RxImagePicker.with(supportFragmentManager).requestImage(Sources.GALLERY).subscribe {
+            
+        }
+```
+
+Request image from documents :
+
+```kotlin
+RxImagePicker.with(supportFragmentManager).requestImage(Sources.DOCUMENTS).subscribe {
+            
+        }
+```
+
+Use android chooser to get image : 
+
+```kotlin
+RxImagePicker.with(supportFragmentManager).requestImage(Sources.CHOOSER, "Chooser title").subscribe {
+            
+        }
 ```
 
 Request multiple images on Android Api level 18+ :
 
-```java
-RxImagePicker.with(getContext()).requestMultipleImages().subscribe(new Consumer<List<Uri>>() {
-                    @Override
-                    public void accept(@NonNull List<Uri> uris) throws Exception {
-                        //Get images by uris.
-                    }
-                });
+```kotlin
+RxImagePicker.with(supportFragmentManager).requestMultipleImages().subscribe {
+            //Get images by uris.
+        }
 ```
 
 ### Using converters
