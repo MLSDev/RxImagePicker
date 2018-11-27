@@ -1,3 +1,7 @@
+### Version 2.2.0
+Migrate project to Kotlin
+Add support for Documents and Chooser intent
+
 ### Version 2.0.3
 Migrate request from Activity to Fragment
 
