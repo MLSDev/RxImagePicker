@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 def siteUrl = 'https://github.com/Frederikos/RxImagePicker'
 def gitUrl = 'https://github.com/Frederikos/RxImagePicker.git'
 
-version = "2.2.0"
+version = "2.2.1"
 group = "com.mlsdev.rximagepicker"
 
 Properties properties = new Properties()
@@ -36,8 +36,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 16
-        versionName "2.2.0"
+        versionCode 17
+        versionName "2.2.1"
     }
 
     buildTypes {
@@ -92,7 +92,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-//just copy paste the lines below
 if (project.hasProperty("kotlin")) { //Kotlin libraries
     task sourcesJar(type: Jar) {
         classifier = 'sources'
