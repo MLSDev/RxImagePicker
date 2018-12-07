@@ -37,9 +37,7 @@ class RxImagePicker : Fragment() {
     }
 
     fun requestImage(source: Sources): Observable<Uri> {
-        publishSubject = PublishSubject.create()
-        attachedSubject = PublishSubject.create()
-        canceledSubject = PublishSubject.create()
+        initSubjects()
         allowMultipleImages = false
         imageSource = source
         requestPickImage()
@@ -48,9 +46,7 @@ class RxImagePicker : Fragment() {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun requestMultipleImages(): Observable<List<Uri>> {
-        publishSubjectMultipleImages = PublishSubject.create()
-        attachedSubject = PublishSubject.create()
-        canceledSubject = PublishSubject.create()
+        initSubjects()
         imageSource = Sources.GALLERY
         allowMultipleImages = true
         requestPickImage()
@@ -62,8 +58,21 @@ class RxImagePicker : Fragment() {
         retainInstance = true
     }
 
+    private fun initSubjects(){
+        publishSubject = PublishSubject.create()
+        attachedSubject = PublishSubject.create()
+        canceledSubject = PublishSubject.create()
+        publishSubjectMultipleImages = PublishSubject.create()
+    }
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+        if (::attachedSubject.isInitialized.not() or
+                ::publishSubject.isInitialized.not() or
+                ::publishSubjectMultipleImages.isInitialized.not() or
+                ::canceledSubject.isInitialized.not()){
+            initSubjects()
+        }
         attachedSubject.onNext(true)
         attachedSubject.onComplete()
     }
