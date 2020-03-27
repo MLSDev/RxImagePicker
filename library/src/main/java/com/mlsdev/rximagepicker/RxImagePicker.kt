@@ -239,7 +239,9 @@ class RxImagePicker : Fragment() {
     }
 
     private fun onImagePicked(uri: Uri?) {
-        publishSubject.onNext(uri!!)
+        uri?.let {
+            publishSubject.onNext(it)
+        }
         publishSubject.onComplete()
     }
 
