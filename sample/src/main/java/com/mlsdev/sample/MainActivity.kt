@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onImagePicked(result: Any) {
+        if (result == null){
+            Toast.makeText(this, java.lang.String.format("result is null"), Toast.LENGTH_LONG).show()
+            return
+        }
         Toast.makeText(this, java.lang.String.format("Result: %s", result), Toast.LENGTH_LONG).show()
         if (result is Bitmap) {
             ivPickedImage.setImageBitmap(result)
